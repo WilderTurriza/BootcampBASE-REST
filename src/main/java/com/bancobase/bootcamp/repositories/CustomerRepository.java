@@ -9,6 +9,6 @@ import java.util.*;
 @Repository
 public interface CustomerRepository extends JpaRepository<CustomerSchema, Long> {
     Optional<CustomerSchema> findByCurp(String curp);
-
     List<CustomerSchema> findByNameContaining(String name);
+    
 }

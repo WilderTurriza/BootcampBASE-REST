@@ -5,14 +5,21 @@ import com.bancobase.bootcamp.repositories.AccountRepository;
 import com.bancobase.bootcamp.schemas.*;
 import com.bancobase.bootcamp.utils.Utils;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class AccountService {
 
     private final AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    	this.accountRepository = accountRepository;
+        
     }
 
     public AccountDTO getAccountByAccountNumber(String accountNumber) {
@@ -40,4 +47,15 @@ public class AccountService {
 
         return List.of(savedAccount);
     }
+
+	public AccountDTO createAccountByCustomerId(CustomerSchema customer) {
+		AccountSchema account = new AccountSchema();
+		
+	    account.setAccountNumber(Utils.generateAccountNumber());
+	    account.setCustomer(customer);
+	    AccountSchema savedAccount = accountRepository.save(account);
+	    
+
+	    return AccountDTO.getFromSchema(account);
+	}
 }

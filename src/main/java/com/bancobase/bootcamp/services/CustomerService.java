@@ -8,6 +8,9 @@ import com.bancobase.bootcamp.schemas.*;
 
 import java.util.*;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CustomerService {
 
     private final AccountService accountService;
@@ -18,11 +21,20 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public CustomerInfoDTO getCustomerById(Long customerId) {
-        Optional<CustomerSchema> person = customerRepository
-                .findById(customerId);
+    public CustomerDTO getCustomerById(Long customerId) {
+        Optional<CustomerSchema> person = customerRepository.findById(customerId);
+        List<AccountDTO> accounts = accountService.getAllAccountsByCustomerId(customerId);
+        CustomerDTO customerDto = CustomerDTO.builder()
+									.accounts(accounts)
+									.information(person.map(CustomerInfoDTO::getFromSchema).orElse(null))
+									.build();
 
-        return person.map(CustomerInfoDTO::getFromSchema).orElse(null);
+        return customerDto;
+    }
+    
+    public Optional<CustomerSchema> getCustomerByCustomerId(Long customerId) {
+        Optional<CustomerSchema> person = customerRepository.findById(customerId);
+        return person;
     }
 
     public List<CustomerInfoDTO> filterCustomersByName(String name) {
@@ -53,4 +65,5 @@ public class CustomerService {
 
         return CustomerDTO.getFromSchema(customer, accounts);
     }
+
 }
